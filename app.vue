@@ -1,12 +1,28 @@
 <template>
-  <main>
-    <side>
+  <main flex="~ nowrap">
+    <Style
+      type="text/css"
+      children="body { padding: 0; margin: 0} html { padding: 0; margin: 0}"
+    />
+    <aside sticky top-0 h-screen flex="shrink-0">
       <nav v-for="routeItem of routes">
-        {{ routeItem.label }}
+        <a :href="routeDefaultPath(routeItem)">{{ routeItem.label }}</a>
       </nav>
-    </side>
-    <head></head>
-    <NuxtPage />
+    </aside>
+    <main flex="grow">
+      <header
+        sticky
+        top-0
+        flex
+        gap-2
+        v-if="activeRoute && activeRoute.sub && activeRoute.sub.length"
+      >
+        <nav inline v-for="subRoute of activeRoute.sub">
+          <a :href="subRoute.path">{{ subRoute.label }}</a>
+        </nav>
+      </header>
+      <NuxtPage />
+    </main>
   </main>
 </template>
 <script setup lang="ts">
@@ -24,9 +40,8 @@ interface RouteItem {
   path?: string;
   icon: string;
   sub?: RouteItem[];
-  active?: boolean;
 }
-const routes = reactive([
+const routes = reactive(<Array<RouteItem>>[
   {
     label: "Home",
     path: "/",
@@ -93,22 +108,22 @@ const routes = reactive([
     sub: [
       {
         label: "One sentence a day",
-        path: "/living-in-hangzhou/school-in-hangzhou",
+        path: "/about-chinese/daily-sentence",
         icon: "i-mdi-chat",
       },
       {
         label: "Tongue twist",
-        path: "/living-in-hangzhou/tours-in-hangzhou",
+        path: "/about-chinese/tongue-twist",
         icon: "i-mdi-thumb-up",
       },
       {
         label: "Traditional culture",
-        path: "/living-in-hangzhou/tours-in-hangzhou",
+        path: "/about-chinese/traditional-culture",
         icon: "i-mdi-silverware-variant",
       },
       {
         label: "Spoken Chinese",
-        path: "/living-in-hangzhou/tours-in-hangzhou",
+        path: "/about-chinese/spoken-chinese",
         icon: "i-mdi-emoticon-excited-outline",
       },
     ],
@@ -120,13 +135,23 @@ const routes = reactive([
     icon: "i-mdi-email-outline",
   },
 ]);
-const isActive = function (route: RouteItem): boolean {
+const isActive = function (routeItem: RouteItem): boolean {
   return (
-    route.path === route.path ||
-    (route.sub && route.sub.some((r) => isActive(r))) ||
+    route.path === routeItem.path ||
+    (routeItem.sub && routeItem.sub.some((r) => isActive(r))) ||
     false
   );
 };
+const activeRoute = computed(() => {
+  return routes.find((route) => isActive(route));
+});
+function routeDefaultPath(routeItem: RouteItem) {
+  if (routeItem.sub && routeItem.sub.length) {
+    return routeItem.sub[0].path;
+  } else {
+    return routeItem.path;
+  }
+}
 const router = useRouter();
 const route = useRoute();
 </script>

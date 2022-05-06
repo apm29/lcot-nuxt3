@@ -1,27 +1,67 @@
 <template>
-  <main flex="~ nowrap">
+  <main w="screen">
     <Style
       type="text/css"
       children="body { padding: 0; margin: 0} html { padding: 0; margin: 0}"
     />
-    <aside sticky top-0 h-screen flex="shrink-0">
+    <!-- 顶部栏主导航 -->
+    <header
+      fixed
+      top-0
+      w-screen
+      overflow="x-auto"
+      flex="~ shrink-0"
+      shadow="lg"
+      bg="white"
+      h="4rem"
+      border="r gray-300"
+      items="center"
+      z="30"
+    >
       <nav v-for="routeItem of routes">
-        <a :href="routeDefaultPath(routeItem)">{{ routeItem.label }}</a>
+        <a
+          :href="routeDefaultPath(routeItem)"
+          flex="~"
+          items="center"
+          p="x-2 y-1"
+          gap="x-2"
+          text-link-button
+        >
+          <i :class="routeItem.icon" text-lg inline-block />{{ routeItem.label }}
+        </a>
       </nav>
-    </aside>
-    <main flex="grow">
-      <header
-        sticky
-        top-0
-        flex
-        gap-2
-        v-if="activeRoute && activeRoute.sub && activeRoute.sub.length"
-      >
-        <nav inline v-for="subRoute of activeRoute.sub">
-          <a :href="subRoute.path">{{ subRoute.label }}</a>
-        </nav>
-      </header>
-      <NuxtPage />
+    </header>
+    <main grid style="grid-template-columns: 160px 1fr; grid-template-rows: 1fr">
+      <!-- 侧边导航.次级导航 -->
+      <div>
+        <aside
+          gap="x-2"
+          border="r gray-100"
+          bg="white"
+          fixed
+          h-full
+          top="4rem"
+          w="160px"
+          v-if="activeRoute && activeRoute.sub && activeRoute.sub.length"
+        >
+          <nav v-for="subRoute of activeRoute.sub">
+            <a
+              text-link-button
+              flex="~"
+              items="center"
+              p="x-2 y-3"
+              gap="x-2"
+              :href="subRoute.path"
+            >
+              <i :class="subRoute.icon" text-lg inline-block />
+              {{ subRoute.label }}
+            </a>
+          </nav>
+        </aside>
+      </div>
+      <main flex="grow" p="t-4rem">
+        <NuxtPage />
+      </main>
     </main>
   </main>
 </template>
@@ -63,7 +103,6 @@ const routes = reactive(<Array<RouteItem>>[
         icon: "i-mdi-account-group",
       },
     ],
-    active: false,
   },
   {
     label: "Course on tours",
@@ -81,7 +120,6 @@ const routes = reactive(<Array<RouteItem>>[
         icon: "i-mdi-human-male-board",
       },
     ],
-    active: false,
   },
   {
     label: "Living in Hangzhou",
@@ -99,7 +137,6 @@ const routes = reactive(<Array<RouteItem>>[
         icon: "i-mdi-train-car",
       },
     ],
-    active: false,
   },
   {
     label: "About chinese",
@@ -127,7 +164,6 @@ const routes = reactive(<Array<RouteItem>>[
         icon: "i-mdi-emoticon-excited-outline",
       },
     ],
-    active: false,
   },
   {
     label: "Contact us",
@@ -152,6 +188,5 @@ function routeDefaultPath(routeItem: RouteItem) {
     return routeItem.path;
   }
 }
-const router = useRouter();
 const route = useRoute();
 </script>

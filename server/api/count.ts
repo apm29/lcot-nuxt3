@@ -1,5 +1,7 @@
+let previewCount = 0
 export default defineEventHandler((event) => {
   return {
-    api: 'works'
+    api: 'works',
+    pv: previewCount++,
   }
 })

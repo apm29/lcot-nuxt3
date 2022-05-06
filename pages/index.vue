@@ -1,3 +1,1 @@
-<template>
-  <NuxtWelcome />
-</template>
+<template>Home</template>

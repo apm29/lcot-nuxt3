@@ -2,7 +2,7 @@
   <main w="screen">
     <Style
       type="text/css"
-      children="body { padding: 0; margin: 0} html { padding: 0; margin: 0}"
+      children="body { padding: 0; margin: 0} html { padding: 0; margin: 0; width: 100vw; height: 100vh; }"
     />
     <!-- 顶部栏主导航 -->
     <header
@@ -31,9 +31,9 @@
         </a>
       </nav>
     </header>
-    <main grid style="grid-template-columns: 160px 1fr; grid-template-rows: 1fr">
+    <main grid style="grid-template-columns: 160px 1fr 160px; grid-template-rows: 1fr">
       <!-- 侧边导航.次级导航 -->
-      <div>
+      <div min-h-screen>
         <aside
           gap="x-2"
           border="r gray-100"
@@ -42,7 +42,7 @@
           h-full
           top="4rem"
           w="160px"
-          v-if="activeRoute && activeRoute.sub && activeRoute.sub.length"
+          v-if="hasSideBar"
         >
           <nav v-for="subRoute of activeRoute.sub">
             <a
@@ -59,9 +59,12 @@
           </nav>
         </aside>
       </div>
-      <main flex="grow" p="t-4rem">
+      <main flex="grow" p="t-4rem" w="sm:100vw 80vw lg:780px xl:1080px  2xl:1080px">
         <NuxtPage />
       </main>
+      <div>
+        <aside fixed top="4rem" w="160px" min-h-screen bg-red-300>侧边</aside>
+      </div>
     </main>
   </main>
 </template>
@@ -188,5 +191,9 @@ function routeDefaultPath(routeItem: RouteItem) {
     return routeItem.path;
   }
 }
+const hasSideBar = computed(() => {
+  const activeRouteValue = unref(activeRoute);
+  return activeRouteValue && activeRouteValue.sub && activeRouteValue.sub.length;
+});
 const route = useRoute();
 </script>
